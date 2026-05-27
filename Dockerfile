@@ -1,7 +1,7 @@
 FROM eclipse-temurin:25-jre-jammy
 
-ARG FRIGATE_VERSION=1.5.3
-ARG FRIGATE_BUILD=1
+ENV FRIGATE_VERSION=1.5.2
+ENV FRIGATE_HOME=/data
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
@@ -10,17 +10,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN wget -q https://github.com/sparrowwallet/frigate/releases/download/${FRIGATE_VERSION}/frigate-${FRIGATE_VERSION}-x86_64.tar.gz \
     && tar -xzf frigate-${FRIGATE_VERSION}-x86_64.tar.gz \
-    && rm frigate-${FRIGATE_VERSION}-x86_64.tar.gz
+    && rm frigate-${FRIGATE_VERSION}-x86_64.tar.gz \
+    && chmod +x /opt/frigate/bin/frigate
 
-RUN mkdir -p /data/db /data/cache \
+RUN mkdir -p ${FRIGATE_HOME}/db ${FRIGATE_HOME}/cache \
     && chmod -R 755 /opt/frigate
-
-COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 EXPOSE 50001 50002
 
-WORKDIR /data
+WORKDIR ${FRIGATE_HOME}
 
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["-n", "testnet4"]
+ENTRYPOINT ["/opt/frigate/bin/frigate"]

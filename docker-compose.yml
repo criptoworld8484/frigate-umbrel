@@ -8,7 +8,8 @@ services:
       PROXY_AUTH_ADD: "false"
 
   frigate:
-    image: ghcr.io/sparrowwallet/frigate-umbrel:latest
+    build: .
+    image: ghcr.io/criptoworld8484/frigate-umbrel:1.5.2
     init: true
     restart: on-failure
     stop_grace_period: 5m
